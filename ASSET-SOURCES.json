@@ -1,0 +1,16 @@
+{
+  "official_page": "https://store.steampowered.com/app/4570720/DragonSword__Awakening/",
+  "files": {
+    "assets/world.jpg": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4570720/3465ef4d24f71d133cd345f7e6dcf3df89ff051a/ss_3465ef4d24f71d133cd345f7e6dcf3df89ff051a.1920x1080.jpg?t=1788398112",
+    "assets/combat.jpg": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4570720/31e4fcb6d3398d96a98a3f63024b0e6176364147/ss_31e4fcb6d3398d96a98a3f63024b0e6176364147.1920x1080.jpg?t=1788398112",
+    "assets/forest.jpg": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4570720/33056464811219dc5b09b634f135e576bd792f75/ss_33056464811219dc5b09b634f135e576bd792f75.1920x1080.jpg?t=1788398112",
+    "assets/ruins.jpg": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4570720/b6bca3e0f8d00f5484ff5acdaac621be4d0b9468/ss_b6bca3e0f8d00f5484ff5acdaac621be4d0b9468.1920x1080.jpg?t=1788398112",
+    "assets/lute.jpg": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257329236/1d18863f5638f4493c326d3fd80aae87264a491c/movie_600x337.jpg?t=1777537446",
+    "assets/theresia.jpg": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257329228/534bf440f99e1afd5d0280f68255f0d2ed801ef5/movie_600x337.jpg?t=1777537447",
+    "assets/kalien.jpg": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257329222/80aa4db3a94474e7618f3a42c9f9f232bf3f390a/movie_600x337.jpg?t=1777537448",
+    "assets/hero-motion.mp4": {
+      "source": "https://video.akamai.steamstatic.com/store_trailers/4570720/1940574627/36e772431f6f735d54ca9e5dda4ab6c076dd4716/1784255508/hls_264_master.m3u8?t=1784255997",
+      "processing": "First 24 seconds; 1280px wide; audio removed; H.264"
+    }
+  }
+}
