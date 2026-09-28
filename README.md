@@ -17,7 +17,7 @@ GitHub reference: https://docs.github.com/en/pages/getting-started-with-github-p
 
 ## Included interactions
 - Four cinematic sections with anchor navigation and active section markers.
-- Mobile navigation, world scene selector, three character spotlights.
+- Mobile navigation, world scene selector, four character spotlights.
 - Muted background video with pause/play control and reduced-motion preference support.
 - Trailer excerpt dialog with keyboard dismissal and a full-trailer link to Steam.
 - Steam destination buttons; no fake purchase, registration, or login flows.
