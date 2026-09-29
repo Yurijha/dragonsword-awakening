@@ -517,8 +517,8 @@ button[hidden],
 }
 .combat .shade {
   background:
-    linear-gradient(90deg, #07151cf2, #081b2290 55%, #09141c35),
-    linear-gradient(0deg, #06151d 4%, transparent 75%);
+    linear-gradient(90deg, #07151c9c 0%, #081b2240 42%, transparent 72%),
+    linear-gradient(0deg, #06151d55 0%, transparent 62%);
 }
 .combat-steps {
   display: flex;
