@@ -147,3 +147,99 @@ document.addEventListener("visibilitychange", () => {
     trailer.pause();
   } else if (motionWanted && !dialog.open) video.play().catch(() => {});
 });
+
+// Keep combat.jpg as the original idle scene; load YouTube only on request.
+const combat = $("#combat"),
+  combatToggle = $("#combat-toggle"),
+  combatFrame = $(".combat-player"),
+  combatStatus = $("#combat-status");
+let combatPlayer, combatRequested = false, combatLoading;
+function showCombatPlayback(active) {
+  combat.classList.toggle("video-active", active);
+  combatFrame.setAttribute("aria-hidden", String(!active));
+  combatToggle.setAttribute("aria-pressed", String(active));
+  combatToggle.textContent = active ? "Pause combat Ⅱ" : "Play combat ▷";
+}
+function stopCombat() {
+  combatRequested = false;
+  combatPlayer?.pauseVideo?.();
+  showCombatPlayback(false);
+}
+function combatError() {
+  stopCombat();
+  combatToggle.disabled = false;
+  combatStatus.textContent = "Video unavailable here. Try Watch on YouTube.";
+}
+function loadCombatAPI() {
+  if (window.YT?.Player) return Promise.resolve();
+  if (combatLoading) return combatLoading;
+  combatLoading = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => reject(new Error("YouTube timed out")), 15000);
+    window.onYouTubeIframeAPIReady = () => {
+      clearTimeout(timeout);
+      resolve();
+    };
+    script.src = "https://www.youtube.com/iframe_api";
+    script.onerror = () => {
+      clearTimeout(timeout);
+      reject(new Error("YouTube unavailable"));
+    };
+    document.head.append(script);
+  }).catch((error) => {
+    combatLoading = null;
+    throw error;
+  });
+  return combatLoading;
+}
+combatToggle.addEventListener("click", async () => {
+  if (combatRequested) {
+    stopCombat();
+    return;
+  }
+  combatRequested = true;
+  combatStatus.textContent = "";
+  if (combatPlayer?.playVideo) {
+    showCombatPlayback(true);
+    combatPlayer.playVideo();
+    return;
+  }
+  combatToggle.disabled = true;
+  combatStatus.textContent = "Loading combat video…";
+  try {
+    await loadCombatAPI();
+    combatPlayer = new YT.Player("combat-video", {
+      host: "https://www.youtube-nocookie.com",
+      videoId: "PetI2TFvfw4",
+      playerVars: { playsinline: 1, rel: 0, origin: location.origin },
+      events: {
+        onReady: (event) => {
+          combatToggle.disabled = false;
+          combatStatus.textContent = "";
+          if (combatRequested && !document.hidden) {
+            showCombatPlayback(true);
+            event.target.playVideo();
+          }
+        },
+        onStateChange: (event) => {
+          if (event.data === YT.PlayerState.PLAYING) {
+            if (!combatRequested) event.target.pauseVideo();
+            else showCombatPlayback(true);
+          } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+            combatRequested = false;
+            showCombatPlayback(false);
+          }
+        },
+        onError: combatError,
+      },
+    });
+  } catch {
+    combatError();
+  }
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) stopCombat();
+});
+new IntersectionObserver((entries) => {
+  if (!entries[0].isIntersecting && combatRequested) stopCombat();
+}).observe(combat);

@@ -483,6 +483,41 @@ button[hidden],
 }
 .combat {
   padding-bottom: 210px;
+  flex-wrap: wrap;
+  align-content: center;
+  gap: 24px;
+}
+.combat-player {
+  display: none;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+.combat-player iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.combat.video-active .combat-player {
+  display: block;
+}
+.combat.video-active > .section-copy,
+.combat.video-active > .shade {
+  display: none;
+}
+.combat-controls {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+}
+.combat-controls a {
+  padding: 10px 14px;
+  background: #06151ad9;
+  border: 1px solid var(--line);
 }
 .combat .shade {
   background:
