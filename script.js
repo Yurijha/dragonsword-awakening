@@ -208,7 +208,17 @@ async function startCombat() {
     combatPlayer = new YT.Player("combat-video", {
       host: "https://www.youtube-nocookie.com",
       videoId: "PetI2TFvfw4",
-      playerVars: { playsinline: 1, rel: 0, origin: location.origin },
+      playerVars: {
+        autoplay: 1,
+        controls: 0,
+        disablekb: 1,
+        loop: 1,
+        mute: 1,
+        playsinline: 1,
+        playlist: "PetI2TFvfw4",
+        rel: 0,
+        origin: location.origin,
+      },
       events: {
         onReady: (event) => {
           combatInitializing = false;
@@ -231,6 +241,8 @@ async function startCombat() {
         onError: combatError,
       },
     });
+    // The iframe itself is the background layer; reveal it immediately after creation.
+    showCombatPlayback(true);
   } catch {
     combatInitializing = false;
     combatError();
