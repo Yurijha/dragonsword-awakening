@@ -148,115 +148,37 @@ document.addEventListener("visibilitychange", () => {
   } else if (motionWanted && !dialog.open) video.play().catch(() => {});
 });
 
-// Combat mirrors the hero: the image remains underneath while the muted background plays.
+// Combat mirrors the hero: a native muted video plays over combat.jpg, with the image underneath as fallback.
 const combat = $("#combat"),
   combatToggle = $("#combat-toggle"),
   combatFrame = $(".combat-player"),
-  combatStatus = $("#combat-status");
-let combatPlayer, combatRequested = false, combatLoading, combatInitializing = false;
-function showCombatPlayback(active) {
-  combatFrame.classList.toggle("playing", active);
-  combatFrame.setAttribute("aria-hidden", String(!active));
-  combatToggle.setAttribute("aria-pressed", String(active));
-  combatToggle.textContent = active ? "Pause combat Ⅱ" : "Play combat ▷";
+  combatVideo = $("#combat-video");
+let combatWanted = false;
+function updateCombat() {
+  combatToggle.setAttribute("aria-pressed", String(combatWanted));
+  combatToggle.textContent = combatWanted ? "Pause combat Ⅱ" : "Play combat ▷";
+  combatFrame.classList.toggle("playing", combatWanted);
 }
-function stopCombat() {
-  combatRequested = false;
-  combatPlayer?.pauseVideo?.();
-  showCombatPlayback(false);
-}
-function combatError() {
-  stopCombat();
-  combatToggle.disabled = false;
-  combatStatus.textContent = "";
-}
-function loadCombatAPI() {
-  if (window.YT?.Player) return Promise.resolve();
-  if (combatLoading) return combatLoading;
-  combatLoading = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    const timeout = setTimeout(() => reject(new Error("YouTube timed out")), 15000);
-    window.onYouTubeIframeAPIReady = () => {
-      clearTimeout(timeout);
-      resolve();
-    };
-    script.src = "https://www.youtube.com/iframe_api";
-    script.onerror = () => {
-      clearTimeout(timeout);
-      reject(new Error("YouTube unavailable"));
-    };
-    document.head.append(script);
-  }).catch((error) => {
-    combatLoading = null;
-    throw error;
-  });
-  return combatLoading;
-}
-async function startCombat() {
-  if (combatPlayer?.playVideo) {
-    combatRequested = true;
-    showCombatPlayback(true);
-    combatPlayer.playVideo();
-    return;
-  }
-  if (combatInitializing) return;
-  combatInitializing = true;
-  combatRequested = true;
-  combatStatus.textContent = "";
+async function playCombat() {
   try {
-    await loadCombatAPI();
-    combatPlayer = new YT.Player("combat-video", {
-      host: "https://www.youtube-nocookie.com",
-      videoId: "PetI2TFvfw4",
-      playerVars: {
-        autoplay: 1,
-        controls: 0,
-        disablekb: 1,
-        loop: 1,
-        mute: 1,
-        playsinline: 1,
-        playlist: "PetI2TFvfw4",
-        rel: 0,
-        origin: location.origin,
-      },
-      events: {
-        onReady: (event) => {
-          combatInitializing = false;
-          combatStatus.textContent = "";
-          if (combatRequested && !document.hidden) {
-            event.target.mute();
-            showCombatPlayback(true);
-            event.target.playVideo();
-          }
-        },
-        onStateChange: (event) => {
-          if (event.data === YT.PlayerState.PLAYING) {
-            if (!combatRequested) event.target.pauseVideo();
-            else showCombatPlayback(true);
-          } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-            combatRequested = false;
-            showCombatPlayback(false);
-          }
-        },
-        onError: combatError,
-      },
-    });
-    // The iframe itself is the background layer; reveal it immediately after creation.
-    showCombatPlayback(true);
+    await combatVideo.play();
+    combatWanted = true;
   } catch {
-    combatInitializing = false;
-    combatError();
+    combatWanted = false;
   }
+  updateCombat();
+}
+function pauseCombat() {
+  combatVideo.pause();
+  combatWanted = false;
+  updateCombat();
 }
 combatToggle.addEventListener("click", () => {
-  if (combatRequested) stopCombat();
-  else startCombat();
+  if (combatWanted) pauseCombat();
+  else playCombat();
 });
+if (!reduced.matches && !navigator.connection?.saveData) playCombat();
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) stopCombat();
+  if (document.hidden) combatVideo.pause();
+  else if (combatWanted) combatVideo.play().catch(() => {});
 });
-new IntersectionObserver((entries) => {
-  if (!entries[0].isIntersecting && combatRequested) stopCombat();
-  if (entries[0].isIntersecting && !combatRequested && !reduced.matches && !navigator.connection?.saveData)
-    startCombat();
-}).observe(combat);

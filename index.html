@@ -233,8 +233,10 @@
             >DISCOVER DRAGONSWORD <span>↗</span></a
           >
         </div>
-        <div class="combat-player" aria-label="DragonSword combat video" aria-hidden="true">
-          <div id="combat-video"></div>
+        <div class="combat-player" aria-hidden="true">
+          <video id="combat-video" muted loop playsinline preload="metadata" poster="combat.jpg" aria-label="DragonSword combat gameplay background">
+            <source src="https://video.akamai.steamstatic.com/store_trailers/4570720/825244674/682c142e1f4bed7587fec07e5e12a022828ace13/1781573170/microtrailer.mp4" type="video/mp4" />
+          </video>
         </div>
         <div class="combat-controls">
           <button id="combat-toggle" class="motion" aria-pressed="false" aria-controls="combat-video">Play combat ▷</button>
