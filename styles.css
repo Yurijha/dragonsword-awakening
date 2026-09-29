@@ -483,31 +483,27 @@ button[hidden],
 }
 .combat {
   padding-bottom: 210px;
-  flex-wrap: wrap;
-  align-content: center;
-  gap: 24px;
 }
 .combat-player {
-  display: none;
-  width: 100%;
-  aspect-ratio: 16 / 9;
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  opacity: 0;
   background: #000;
+  transition: opacity 0.8s;
 }
+.combat-player.playing { opacity: 1; }
 .combat-player iframe {
   display: block;
   width: 100%;
   height: 100%;
   border: 0;
-}
-.combat.video-active .combat-player {
-  display: block;
-}
-.combat.video-active > .section-copy,
-.combat.video-active > .shade {
-  display: none;
+  pointer-events: none;
 }
 .combat-controls {
-  width: 100%;
+  position: absolute;
+  left: 9%;
+  bottom: 115px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -797,6 +793,10 @@ dialog p a {
   }
   .combat {
     padding-bottom: 240px;
+  }
+  .combat-controls {
+    left: 8%;
+    bottom: 135px;
   }
   .combat-steps {
     gap: 20px;

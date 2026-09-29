@@ -148,14 +148,14 @@ document.addEventListener("visibilitychange", () => {
   } else if (motionWanted && !dialog.open) video.play().catch(() => {});
 });
 
-// Keep combat.jpg as the original idle scene; load YouTube only on request.
+// Keep combat.jpg as the idle scene; reveal the YouTube background when it plays.
 const combat = $("#combat"),
   combatToggle = $("#combat-toggle"),
   combatFrame = $(".combat-player"),
   combatStatus = $("#combat-status");
 let combatPlayer, combatRequested = false, combatLoading;
 function showCombatPlayback(active) {
-  combat.classList.toggle("video-active", active);
+  combatFrame.classList.toggle("playing", active);
   combatFrame.setAttribute("aria-hidden", String(!active));
   combatToggle.setAttribute("aria-pressed", String(active));
   combatToggle.textContent = active ? "Pause combat Ⅱ" : "Play combat ▷";
@@ -217,6 +217,7 @@ combatToggle.addEventListener("click", async () => {
           combatToggle.disabled = false;
           combatStatus.textContent = "";
           if (combatRequested && !document.hidden) {
+            event.target.mute();
             showCombatPlayback(true);
             event.target.playVideo();
           }
@@ -242,4 +243,6 @@ document.addEventListener("visibilitychange", () => {
 });
 new IntersectionObserver((entries) => {
   if (!entries[0].isIntersecting && combatRequested) stopCombat();
+  if (entries[0].isIntersecting && !combatPlayer && !reduced.matches && !navigator.connection?.saveData)
+    combatToggle.click();
 }).observe(combat);
