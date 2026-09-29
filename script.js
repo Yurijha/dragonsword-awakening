@@ -148,12 +148,12 @@ document.addEventListener("visibilitychange", () => {
   } else if (motionWanted && !dialog.open) video.play().catch(() => {});
 });
 
-// Keep combat.jpg as the idle scene; reveal the YouTube background when it plays.
+// Combat mirrors the hero: the image remains underneath while the muted background plays.
 const combat = $("#combat"),
   combatToggle = $("#combat-toggle"),
   combatFrame = $(".combat-player"),
   combatStatus = $("#combat-status");
-let combatPlayer, combatRequested = false, combatLoading;
+let combatPlayer, combatRequested = false, combatLoading, combatInitializing = false;
 function showCombatPlayback(active) {
   combatFrame.classList.toggle("playing", active);
   combatFrame.setAttribute("aria-hidden", String(!active));
@@ -168,7 +168,7 @@ function stopCombat() {
 function combatError() {
   stopCombat();
   combatToggle.disabled = false;
-  combatStatus.textContent = "Video unavailable here. Try Watch on YouTube.";
+  combatStatus.textContent = "";
 }
 function loadCombatAPI() {
   if (window.YT?.Player) return Promise.resolve();
@@ -192,20 +192,17 @@ function loadCombatAPI() {
   });
   return combatLoading;
 }
-combatToggle.addEventListener("click", async () => {
-  if (combatRequested) {
-    stopCombat();
-    return;
-  }
-  combatRequested = true;
-  combatStatus.textContent = "";
+async function startCombat() {
   if (combatPlayer?.playVideo) {
+    combatRequested = true;
     showCombatPlayback(true);
     combatPlayer.playVideo();
     return;
   }
-  combatToggle.disabled = true;
-  combatStatus.textContent = "Loading combat video…";
+  if (combatInitializing) return;
+  combatInitializing = true;
+  combatRequested = true;
+  combatStatus.textContent = "";
   try {
     await loadCombatAPI();
     combatPlayer = new YT.Player("combat-video", {
@@ -214,7 +211,7 @@ combatToggle.addEventListener("click", async () => {
       playerVars: { playsinline: 1, rel: 0, origin: location.origin },
       events: {
         onReady: (event) => {
-          combatToggle.disabled = false;
+          combatInitializing = false;
           combatStatus.textContent = "";
           if (combatRequested && !document.hidden) {
             event.target.mute();
@@ -235,14 +232,19 @@ combatToggle.addEventListener("click", async () => {
       },
     });
   } catch {
+    combatInitializing = false;
     combatError();
   }
+}
+combatToggle.addEventListener("click", () => {
+  if (combatRequested) stopCombat();
+  else startCombat();
 });
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) stopCombat();
 });
 new IntersectionObserver((entries) => {
   if (!entries[0].isIntersecting && combatRequested) stopCombat();
-  if (entries[0].isIntersecting && !combatPlayer && !reduced.matches && !navigator.connection?.saveData)
-    combatToggle.click();
+  if (entries[0].isIntersecting && !combatRequested && !reduced.matches && !navigator.connection?.saveData)
+    startCombat();
 }).observe(combat);
