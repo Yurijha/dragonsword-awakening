@@ -154,7 +154,6 @@ const combat = $("#combat"),
   combatFrame = $(".combat-player"),
   combatVideo = $("#combat-video");
 let combatWanted = false;
-const combatEnd = 44;
 function updateCombat() {
   combatToggle.setAttribute("aria-pressed", String(combatWanted));
   combatToggle.textContent = combatWanted ? "Pause combat Ⅱ" : "Play combat ▷";
@@ -177,12 +176,6 @@ function pauseCombat() {
 combatToggle.addEventListener("click", () => {
   if (combatWanted) pauseCombat();
   else playCombat();
-});
-combatVideo.addEventListener("timeupdate", () => {
-  if (combatVideo.currentTime >= combatEnd) {
-    combatVideo.currentTime = 0;
-    if (combatWanted) combatVideo.play().catch(() => {});
-  }
 });
 if (!reduced.matches && !navigator.connection?.saveData) playCombat();
 document.addEventListener("visibilitychange", () => {
